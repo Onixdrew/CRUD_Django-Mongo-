@@ -9,7 +9,8 @@
 <body>
     
 <h1 class='text-center text-2xl text-bold mt-5' >{{mensaje}}</h1>
-<div class="relative overflow-x-auto h-[70vh] shadow-md sm:rounded-lg mt-[4%]  ">
+<a href="/vistaAgregarPeliculas/"><button class="bg-gray-600 p-3 ml-[15%] mt-6 text-white rounded-xl  hover:bg-gray-800">Agregar</button></a>
+<div class="overflow-x-auto   mt-[4%]  ">
     <table class="w-auto mx-auto overflow-y-auto  text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-center  text-gray-700 uppercase dark:text-gray-400">
             <tr class="text-lg border border-black">
@@ -32,13 +33,16 @@
                     foto
                 </th>
                 <th scope="col" class="px-6 py-3 dark:bg-gray-800">
-                    pelGenero
+                    Genero
+                </th>
+                <th scope="col" class="px-6 py-3 ">
+                    Acciones
                 </th>
             </tr>
         </thead>
         <tbody>
             {% for p in peliculas%}
-                <tr class="border-b text-center text-base border-gray-200 dark:border-gray-700">
+                <tr class="border text-center text-base border-gray-200 dark:border-gray-700">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
                         {{p.codigo }}
                     </th>
@@ -67,6 +71,31 @@
                         {{p.pelGenero }}
 
                     </td>
+
+                    
+                    <script>
+                        function confirmarEliminacion(id) {
+                            Swal.fire({
+                                title: '¿Estás seguro?',
+                                text: 'Esta acción no se puede deshacer.',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Sí, eliminar',
+                                cancelButtonText: 'Cancelar'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = `/eliminarPeliculas/${id}/`;
+                                }
+                            });
+                        }
+                    </script>
+
+                    <td class="px-6 py-4 flex space-x-3 ">
+                        <a href="/consutarPelicula/{{p.pk}}/"><button class="border rounded-lg p-2 text-white bg-blue-500">Editar</button></a>
+                        <button onclick="confirmarEliminacion('{{ p.pk }}')" class="border rounded-lg p-2 text-white bg-red-500">Eliminar</button>
+                        
+
+                    </td>
                 </tr>
             {% endfor %}
             
@@ -74,5 +103,8 @@
     </table>
 </div>
 
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 </body>
 </html>

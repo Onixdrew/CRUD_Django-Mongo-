@@ -1,10 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.db import Error
 from appMovies.models import Genero, Peliculas
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from bson import ObjectId
-
+import os
+from django.utils.http import urlencode
+from GestioPeliculas import settings
 # Create your views here.
 
 def inicio(request):
@@ -69,8 +71,11 @@ def agregarPelicula(request):
         protagonistaCall = request.POST['protagonista']
         duracionCall = int(request.POST['duracion'])
         resumenCall = request.POST['resumen']
-        fotoCall = request.FILES['foto']
-        idGenero = int(request.POST['idGenero'])
+       
+        if 'foto' in request.FILES:
+            fotoCall = request.FILES['foto']
+        
+        idGenero = ObjectId(request.POST['idGenero'])
         
         genero = Genero.objects.get(pk=idGenero)
         
@@ -92,14 +97,75 @@ def agregarPelicula(request):
     except Error as error:
         mensaje=str(error)
         
-    retorno={"mensaje":mensaje,"peliculas": list(peliculas), "idPelicula":pelicula.id}
-    return render(request, "listarPeliculas.html", retorno)
+    retorno={"mensaje":mensaje,"peliculas": list(peliculas)}
+    return redirect("/vistaListarPeliculas/")
 
 
 
 
 
+def consultarPeliculaPorId(request,id):
+    convObjecId=ObjectId(id)
+    pelicula=Peliculas.objects.get(pk=convObjecId)
+    generos= Genero.objects.all()
+    selectGenero= Genero.objects.get(pk=ObjectId(pelicula.pelGenero_id))
+    retorno={"pelicula":pelicula, "generos":generos, 'selectGenero':selectGenero}
+    
+    return render(request, "actualizarPelicula.html", retorno)
 
+
+
+def actualizarPeliculas(request):
+    try:
+        
+        # extraigo el id la pelicula que se va actualizar para usarlo como criterio
+        peliculaUpdate= Peliculas.objects.get(pk= ObjectId(request.POST['idPeliculaUpdate']))
+        
+        peliculaUpdate.codigo = int(request.POST['codigo'])
+        peliculaUpdate.titulo = request.POST['titulo']
+        peliculaUpdate.protagonista = request.POST['protagonista']
+        peliculaUpdate.duracion = int(request.POST['duracion'])
+        peliculaUpdate.resumen = request.POST['resumen']
+        idGenero = ObjectId(request.POST['idGenero'])
+        
+        genero = Genero.objects.get(pk=idGenero)
+        peliculaUpdate.pelGenero=genero
+        
+        if 'foto' in request.FILES:
+            foto = request.FILES.get('foto')
+        
+        if (foto):
+            os.remove(os.path.join(settings.MEDIA_ROOT +'/'+ str(peliculaUpdate.foto)))
+            
+            peliculaUpdate.foto=foto
+            
+        peliculaUpdate.save()
+        mensaje='Pelicula actualizada'
+    
+    except Error as error:
+        mensaje= str(error)
+        
+    # messages.success(request, 'La película se actualizó correctamente.')
+    retorno = urlencode({'mensaje': mensaje}) 
+    # return JsonResponse(retorno)
+    return redirect("/vistaListarPeliculas/")
+        
+
+
+def eliminarPelicula(request, id):
+    
+    try:
+        
+        eliminarMovie= Peliculas.objects.get(pk=ObjectId(id))
+        eliminarMovie.delete()
+        mensaje='Pelicula eliminada Correctamente'
+    
+    except Error as error:
+        mensaje= str(error)
+        
+    retorno = urlencode({'mensaje': mensaje}) 
+    # return JsonResponse(retorno)
+    return redirect( "/vistaListarPeliculas/")
 
 
 

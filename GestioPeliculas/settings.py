@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'appMovies'
+    'appMovies',
+    'tailwind'
 ]
 
 MIDDLEWARE = [
@@ -76,7 +77,7 @@ WSGI_APPLICATION = 'GestioPeliculas.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES= {
-    'default**': {
+    'default_sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     },
@@ -95,11 +96,9 @@ DATABASES= {
         'CLIENT': {
             'host': 'mongodb+srv://Andrew:BEyKKt0ai4ArRqBQ@cluster0.qj0gkdd.mongodb.net/GestionPeliculas?retryWrites=true&w=majority&appName=Cluster0'
         }
-    }
-}
-
-DATABASES_mysql = {
-    'default': {
+    },
+    
+    'default_mysql': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME':'GestionPeliculas',
         'USER':'root',
@@ -108,6 +107,8 @@ DATABASES_mysql = {
         'PORT':'3306'
     }
 }
+
+
 
 
 # Password validation

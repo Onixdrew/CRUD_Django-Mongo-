@@ -21,19 +21,23 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.inicio),
-    
     # formularo para agregar genero
     path('vistaAgregarGenero/', views.vistaAgregarGenero),
     path('agregarGenero/', views.agregarGenero),
     
-    # peliculas
+    # listar peliculas
     path('vistaListarPeliculas/', views.listarPeliculas),
     
-    path('agregarPeliculas/', views.agregarPelicula),
+    # agregar
     path('vistaAgregarPeliculas/', views.vistaAgregarPeliculas),
+    path('agregarPeliculas/', views.agregarPelicula),
+    
+    # actualizar
+    path('consutarPelicula/<str:id>/', views.consultarPeliculaPorId),
+    path('actualizarPeliculas/', views.actualizarPeliculas),
+    
+    # eliminar
+    path('eliminarPeliculas/<str:id>/', views.eliminarPelicula),
 ]
-
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
